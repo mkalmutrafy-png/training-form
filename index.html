@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تسجيل شهادة التدريب — Patient Safety Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:       #1e3a5f;
+  --primary-light: #2d5a8e;
+  --accent:        #c8a84b;
+  --accent-light:  #e8c96a;
+  --success:       #0d6e4f;
+  --success-bg:    #e6f4ef;
+  --danger:        #9b1c1c;
+  --danger-bg:     #fef2f2;
+  --bg:            #f0f4f8;
+  --card:          #ffffff;
+  --border:        #d4dde8;
+  --text:          #1a2940;
+  --text-muted:    #5a7194;
+  --radius:        14px;
+  --shadow:        0 8px 32px rgba(30,58,95,0.12);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  color: var(--text);
+}
+
+/* ── خلفية متحركة ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(30,58,95,.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, rgba(200,168,75,.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 580px;
+}
+
+/* ── البطاقة الرئيسية ── */
+.card {
+  background: var(--card);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border: 1px solid rgba(212,221,232,.6);
+}
+
+/* ── الرأس ── */
+.card-header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  padding: 36px 36px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.card-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 24px;
+  background: var(--card);
+  border-radius: 24px 24px 0 0;
+}
+/* زخرفة دوائر خلفية */
+.card-header::before {
+  content: '';
+  position: absolute;
+  top: -40px; left: -40px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+}
+
+.logo-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.logo-ring {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.1);
+  border: 2px solid rgba(200,168,75,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-inner {
+  width: 62px; height: 62px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(200,168,75,.4);
+}
+.logo-inner svg {
+  width: 32px; height: 32px;
+  fill: white;
+}
+
+.header-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+  letter-spacing: .3px;
+}
+.header-sub {
+  font-size: 12.5px;
+  color: rgba(255,255,255,.65);
+  direction: ltr;
+}
+.header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  background: rgba(200,168,75,.15);
+  border: 1px solid rgba(200,168,75,.35);
+  color: var(--accent-light);
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header-badge svg {
+  width: 13px; height: 13px;
+  fill: var(--accent-light);
+  flex-shrink: 0;
+}
+
+/* ── جسم البطاقة ── */
+.card-body {
+  padding: 28px 36px 32px;
+}
+
+/* ── تقسيم الأقسام بخط ذهبي ── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+  margin-top: 22px;
+}
+.section-label:first-child { margin-top: 0; }
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to left, transparent, rgba(200,168,75,.3));
+}
+.section-label svg {
+  width: 15px; height: 15px;
+  fill: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── حقول الإدخال ── */
+.form-group { margin-bottom: 16px; }
+
+label.field-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 7px;
+}
+label.field-label svg {
+  width: 15px; height: 15px;
+  fill: var(--primary-light);
+  flex-shrink: 0;
+  opacity: .75;
+}
+.required {
+  color: #c0392b;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.field-wrap {
+  position: relative;
+}
+.field-wrap svg.field-icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  width: 16px; height: 16px;
+  fill: var(--text-muted);
+  opacity: .5;
+  pointer-events: none;
+}
+
+input[type="text"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 11px 14px 11px 38px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13.5px;
+  font-family: 'Cairo', sans-serif;
+  color: var(--text);
+  background: #f7f9fc;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+  appearance: none;
+}
+input[type="text"]:focus,
+input[type="date"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(45,90,142,.1);
+}
+input::placeholder { color: #9aadbe; }
+
+/* ── رفع الملف ── */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .25s;
+  background: #f7f9fc;
+  position: relative;
+}
+.upload-zone:hover {
+  border-color: var(--primary-light);
+  background: #eef3f9;
+}
+.upload-zone.has-file {
+  border-color: var(--success);
+  background: var(--success-bg);
+  border-style: solid;
+}
+.upload-zone input[type="file"] { display: none; }
+
+.upload-icon-wrap {
+  width: 52px; height: 52px;
+  margin: 0 auto 12px;
+  border-radius: 14px;
+  background: rgba(30,58,95,.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .25s;
+}
+.upload-zone:hover .upload-icon-wrap { background: rgba(30,58,95,.12); }
+.upload-zone.has-file .upload-icon-wrap { background: rgba(13,110,79,.12); }
+.upload-icon-wrap svg {
+  width: 26px; height: 26px;
+  fill: var(--primary-light);
+}
+.upload-zone.has-file .upload-icon-wrap svg { fill: var(--success); }
+
+.upload-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.upload-hint {
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.upload-name {
+  margin-top: 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--success);
+  word-break: break-all;
+  display: none;
+}
+.upload-zone.has-file .upload-name { display: block; }
+
+/* ── رسائل النجاح/الخطأ ── */
+.alert {
+  display: none;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius);
+  font-size: 13.5px;
+  font-weight: 500;
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.alert.show { display: flex; }
+.alert-icon {
+  flex-shrink: 0;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.alert-icon svg { width: 20px; height: 20px; }
+
+.alert-success {
+  background: var(--success-bg);
+  border: 1px solid rgba(13,110,79,.2);
+  color: var(--success);
+}
+.alert-success .alert-icon { background: rgba(13,110,79,.12); }
+.alert-success .alert-icon svg { fill: var(--success); }
+
+.alert-error {
+  background: var(--danger-bg);
+  border: 1px solid rgba(155,28,28,.15);
+  color: var(--danger);
+}
+.alert-error .alert-icon { background: rgba(155,28,28,.1); }
+.alert-error .alert-icon svg { fill: var(--danger); }
+
+/* ── زر الإرسال ── */
+.btn-submit {
+  width: 100%;
+  padding: 15px 24px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Cairo', sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all .25s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(30,58,95,.25);
+}
+.btn-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.08) 0%, transparent 100%);
+}
+.btn-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(30,58,95,.35);
+}
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
+}
+.btn-submit:disabled { opacity: .55; cursor: not-allowed; }
+
+.btn-submit svg {
+  width: 18px; height: 18px;
+  fill: white;
+  flex-shrink: 0;
+}
+.spinner {
+  display: none;
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin .75s linear infinite;
+}
+.btn-submit.loading .spinner { display: block; }
+.btn-submit.loading svg { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── الفوتر ── */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 36px 20px;
+  border-top: 1px solid #eef1f5;
+  font-size: 11.5px;
+  color: var(--text-muted);
+}
+.card-footer svg {
+  width: 14px; height: 14px;
+  fill: var(--accent);
+  flex-shrink: 0;
+}
+
+/* ── خط فاصل ذهبي أسفل الهيدر ── */
+.gold-line {
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--accent));
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .card-header { padding: 28px 24px 22px; }
+  .card-body   { padding: 22px 20px 26px; }
+  .card-footer { padding: 14px 20px 18px; }
+}
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<div class="card">
+
+  <!-- ══ HEADER ══ -->
+  <div class="card-header">
+    <div class="logo-wrap">
+      <div class="logo-ring">
+        <div class="logo-inner">
+          <!-- shield icon -->
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 14l-3-3 1.41-1.41L11 12.17l5.59-5.58L18 8l-7 7z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div class="header-title">تسجيل شهادة التدريب</div>
+    <div class="header-sub">Patient Safety Training Certificate Submission</div>
+    <div class="header-badge">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      مستشفى الولادة والأطفال · EduMK E-Learning
+    </div>
+  </div>
+
+  <!-- خط ذهبي فاصل -->
+  <div class="gold-line"></div>
+
+  <!-- ══ BODY ══ -->
+  <div class="card-body">
+
+    <!-- رسائل -->
+    <div class="alert alert-success" id="success-msg">
+      <div class="alert-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      </div>
+      <div>
+        <div style="font-weight:700;margin-bottom:3px;">تم الإرسال بنجاح / Submitted Successfully</div>
+        <div style="font-size:12.5px;opacity:.85;">تم استلام بياناتك وشهادتك. شكراً لإكمالك التدريب.</div>
+      </div>
+    </div>
+    <div class="alert alert-error" id="error-msg">
+      <div class="alert-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+      </div>
+      <div id="error-text">حدث خطأ، يرجى المحاولة مرة أخرى.</div>
+    </div>
+
+    <form id="attendanceForm" novalidate>
+
+      <!-- ══ معلومات الموظف ══ -->
+      <div class="section-label">
+        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        بيانات الموظف / Employee Info
+      </div>
+
+      <div class="form-group">
+        <label class="field-label" for="employeeName">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          الاسم الكامل / Full Name
+          <span class="required">*</span>
+        </label>
+        <div class="field-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          <input type="text" id="employeeName" required placeholder="مثال: أحمد محمد الشمري">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label" for="employeeId">
+          <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+          الرقم الوظيفي / Employee ID
+          <span class="required">*</span>
+        </label>
+        <div class="field-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+          <input type="text" id="employeeId" required placeholder="مثال: 12345">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label" for="department">
+          <svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+          القسم / الإدارة — Department
+          <span class="required">*</span>
+        </label>
+        <div class="field-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+          <select id="department" required>
+            <option value="">— اختر القسم / Select Department —</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ══ بيانات التدريب ══ -->
+      <div class="section-label">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+        بيانات التدريب / Training Details
+      </div>
+
+      <div class="form-group">
+        <label class="field-label" for="trainingStatus">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          حالة التدريب / Training Status
+          <span class="required">*</span>
+        </label>
+        <div class="field-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          <select id="trainingStatus" required>
+            <option value="Completed">✓ Completed — مكتمل</option>
+            <option value="Pending">○ Pending — قيد الإكمال</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="field-label" for="completionDate">
+          <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+          تاريخ الإتمام / Completion Date
+        </label>
+        <div class="field-wrap">
+          <svg class="field-icon" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/></svg>
+          <input type="date" id="completionDate">
+        </div>
+      </div>
+
+      <!-- ══ رفع الشهادة ══ -->
+      <div class="section-label">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11 8 15.01z"/></svg>
+        الشهادة المرفقة / Certificate Upload
+      </div>
+
+      <div class="form-group">
+        <label class="field-label">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg>
+          شهادة الحضور / Attendance Certificate
+          <span class="required">*</span>
+        </label>
+        <label class="upload-zone" id="uploadZone">
+          <input type="file" id="certificate" accept=".pdf,.jpg,.jpeg,.png" required>
+          <div class="upload-icon-wrap">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15.01l1.41 1.41L11 14.84V19h2v-4.16l1.59 1.59L16 15.01 12.01 11 8 15.01z"/></svg>
+          </div>
+          <div class="upload-title">اضغط لرفع الشهادة / Click to Upload</div>
+          <div class="upload-hint">PDF · JPG · PNG &nbsp;|&nbsp; الحد الأقصى 10MB</div>
+          <div class="upload-name" id="uploadName"></div>
+        </label>
+      </div>
+
+      <!-- زر الإرسال -->
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <div class="spinner"></div>
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        <span class="btn-text">إرسال البيانات / Submit</span>
+      </button>
+
+    </form>
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="card-footer">
+    <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+    Patient Safety Portal &nbsp;·&nbsp; EduMK E-Learning Platform &nbsp;·&nbsp; 2026
+  </div>
+
+</div><!-- /card -->
+</div><!-- /page-wrap -->
+
+<script>
+// ── الإعدادات ──
+var WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwCkY9m0Nyfc9u-QslihdVun1SYRIadnXYTbQdjoI-bK6ayJG9pKUx-t3Qqq23M-e-7sg/exec";
+
+// ── قائمة الأقسام ──
+var DEPARTMENTS = [
+  "أطباء الأشعه","أطباء التخدير","أطباء العنايه المركزة لحديثي الولاده",
+  "أطباء النساء","أطباء باطنية الأطفال","أطباء جراحة الأطفال",
+  "إدارة الأسرة","إدارة الامن والسلامة","إدارة الجودة وسلامة المرضى",
+  "إدارة المرافق","إدارة المستشفى","ادارة التمريض- التعليم التمريضي",
+  "ادارة التمريض- الجودة التمريضيه","الإحصاء","الإدارة الطبية",
+  "الإدارة المناوبه","الاتصالات الادارية","الاحاله الطبية",
+  "الاعلام والتثقيف الصحي","الالتزام","التخدير أطباء",
+  "التخطيط والطوارئ","التطوع الصحي","التعقيم","التغذية العلاجية",
+  "التغذيه","التغذيه العامه","التمريض","التموين الطبي","التوعية الدينية",
+  "الخدمة الإجتماعية","السجلات الطبية","السكن","السلامة العامة",
+  "الشؤون الاكاديمية والتدريب","الصحة الالكترونية","الصحة العامة",
+  "الصيانة الطبية","الصيانه","الصيدلية","الطب المنزلي","الطب الوقائي",
+  "العلاج التنفسي","العلاج الطبيعي","القانونية","المالي والإداري",
+  "الماليه","المختبر","المراجعة الأكلينيكيه","المراجعه الداخلية",
+  "المستودعات الغير طبية","الموارد البشرية","الموارد الذاتية",
+  "تباليغ الولادة","تجربة المريض","تقارير طبية",
+  "تمريض - قسم مابعد الولادة","تمريض - قسم ماقبل الولادة",
+  "تمريض العناية المركزه لحديثي الولادة","تمريض العناية المركزه للاطفال",
+  "تمريض باطنية الاطفال","تمريض جراحة الاطفال",
+  "تمريض جراحة اليوم الواحد","تمريض طوارئ الاطفال",
+  "تمريض طوارئ النساء","تمريض عناية النساء","تمريض غرفة الولادة",
+  "تمريض قسم العمليات","تمريض-قسم العيادات الخارجية","شؤون المرضى",
+  "طوارئ الأطفال أطباء","عيادات النساء","فنين التخدير","قسم الاشعه",
+  "قسم الامن","قسم الوفيات","مراقبة المخزون","مراقبة انتظام الدوام",
+  "مكافحة العدوى"
+];
+
+// ملء القائمة المنسدلة
+var sel = document.getElementById('department');
+DEPARTMENTS.sort().forEach(function(d) {
+  var o = document.createElement('option');
+  o.value = o.textContent = d;
+  sel.appendChild(o);
+});
+
+// معاينة الملف
+var fileInput  = document.getElementById('certificate');
+var uploadZone = document.getElementById('uploadZone');
+var uploadName = document.getElementById('uploadName');
+
+fileInput.addEventListener('change', function() {
+  if (!fileInput.files[0]) return;
+  var file = fileInput.files[0];
+  if (file.size > 10 * 1024 * 1024) {
+    alert('حجم الملف يجب ألا يتجاوز 10 ميجابايت / File must not exceed 10MB');
+    fileInput.value = '';
+    return;
+  }
+  uploadZone.classList.add('has-file');
+  uploadName.textContent = '✓  ' + file.name;
+});
+
+// تحويل الملف إلى Base64
+function fileToBase64(file) {
+  return new Promise(function(resolve, reject) {
+    var r = new FileReader();
+    r.onload = function() { resolve(r.result.split(',')[1]); };
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+// الإرسال
+var form       = document.getElementById('attendanceForm');
+var submitBtn  = document.getElementById('submitBtn');
+var successMsg = document.getElementById('success-msg');
+var errorMsg   = document.getElementById('error-msg');
+var errorText  = document.getElementById('error-text');
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  successMsg.classList.remove('show');
+  errorMsg.classList.remove('show');
+
+  if (!document.getElementById('employeeName').value.trim() ||
+      !document.getElementById('employeeId').value.trim()   ||
+      !document.getElementById('department').value          ||
+      !fileInput.files[0]) {
+    errorText.textContent = 'يرجى تعبئة جميع الحقول المطلوبة ورفع الشهادة / Please fill all required fields.';
+    errorMsg.classList.add('show');
+    return;
+  }
+
+  submitBtn.classList.add('loading');
+  submitBtn.disabled = true;
+
+  fileToBase64(fileInput.files[0]).then(function(base64) {
+    var payload = {
+      employeeName:   document.getElementById('employeeName').value.trim(),
+      employeeId:     document.getElementById('employeeId').value.trim(),
+      department:     document.getElementById('department').value,
+      trainingStatus: document.getElementById('trainingStatus').value,
+      completionDate: document.getElementById('completionDate').value || new Date().toISOString().split('T')[0],
+      fileName:       fileInput.files[0].name,
+      fileType:       fileInput.files[0].type,
+      fileBase64:     base64
+    };
+
+    return fetch(WEB_APP_URL, {
+      method:  'POST',
+      body:    JSON.stringify(payload),
+      headers: { 'Content-Type': 'text/plain' }
+    });
+  })
+  .then(function(res) { return res.json(); })
+  .then(function(result) {
+    if (result.success) {
+      successMsg.classList.add('show');
+      form.reset();
+      uploadZone.classList.remove('has-file');
+      uploadName.textContent = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      throw new Error(result.error || 'فشل الإرسال');
+    }
+  })
+  .catch(function(err) {
+    errorText.textContent = 'حدث خطأ / Error: ' + err.message + ' — يرجى المحاولة مرة أخرى.';
+    errorMsg.classList.add('show');
+  })
+  .finally(function() {
+    submitBtn.classList.remove('loading');
+    submitBtn.disabled = false;
+  });
+});
+</script>
+</body>
+</html>
